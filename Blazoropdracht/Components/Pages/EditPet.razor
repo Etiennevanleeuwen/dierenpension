@@ -1,0 +1,38 @@
+﻿@page "/pets/{Id:int}/edit"
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<PageTitle>Edit Pet</PageTitle>
+<h1>Edit Pet</h1>
+
+@if (pet is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="pet" OnValidSubmit="Save">
+        <label>Naam</label>
+        <InputText @bind-Value="pet.Name" />
+        <button type="submit">Save</button>
+        <a href="/pets">Cancel</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Pet? pet;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pet = await Db.Pets.FindAsync(Id);
+    }
+
+    private async Task Save()
+    {
+        await Db.SaveChangesAsync();
+        Nav.NavigateTo("/pets");
+    }
+} 

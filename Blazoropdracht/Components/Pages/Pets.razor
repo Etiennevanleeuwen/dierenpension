@@ -17,7 +17,8 @@ else
         <tr>
             <th>ID</th>
             <th>Naam</th>
-            <th>Client</th>
+            <th>Eigenaar</th>
+            <th>Acties</th>
         </tr>
         </thead>
         <tbody>
@@ -27,6 +28,7 @@ else
                 <td>@pet.Id</td>
                 <td>@pet.Name</td>
                 <td>@pet.Client?.Name</td>
+                <td><a href="/pets/@pet.Id/edit">Edit</a></td>
             </tr>
         }
         </tbody>
@@ -40,4 +42,4 @@ else
     {
         pets = await Db.Pets.Include(p => p.Client).ToListAsync();
     }
-}
+} 

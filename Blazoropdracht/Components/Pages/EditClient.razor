@@ -1,0 +1,46 @@
+﻿@page "/clients/{Id:int}/edit"
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<PageTitle>Edit Client</PageTitle>
+<h1>Edit Client</h1>
+
+@if (client is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="client" OnValidSubmit="Save">
+        <label>Name</label>
+        <InputText @bind-Value="client.Name" />
+        <label>Address</label>
+        <InputText @bind-Value="client.Address" />
+        <label>Zipcode</label>
+        <InputText @bind-Value="client.Zipcode" />
+        <label>City</label>
+        <InputText @bind-Value="client.City" />
+        <button type="submit">Save</button>
+        <a href="/clients">Cancel</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Client? client;
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = await Db.Clients.FindAsync(Id);
+    }
+
+    private async Task Save()
+    {
+        await Db.SaveChangesAsync();
+        Nav.NavigateTo("/clients");
+    }
+}
+
+
