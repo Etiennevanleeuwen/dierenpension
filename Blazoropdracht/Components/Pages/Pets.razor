@@ -1,0 +1,43 @@
+﻿@page "/pets"
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>Pets</PageTitle>
+<h1>Pets</h1>
+
+@if (pets is null)
+{
+    <p>Laden...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Naam</th>
+            <th>Client</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var pet in pets)
+        {
+            <tr>
+                <td>@pet.Id</td>
+                <td>@pet.Name</td>
+                <td>@pet.Client?.Name</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Pet>? pets;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pets = await Db.Pets.Include(p => p.Client).ToListAsync();
+    }
+}
