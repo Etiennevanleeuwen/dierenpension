@@ -1,0 +1,48 @@
+﻿@page "/clients"
+@using Microsoft.EntityFrameworkCore
+@using Blazoropdracht;
+@inject AppDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>Clients</PageTitle>
+<h1>Clients</h1>
+
+@if (clients is null)
+{
+    <p>Laden...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Naam</th>
+            <th>Adres</th>
+            <th>Postcode</th>
+            <th>Stad</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var client in clients)
+        {
+            <tr>
+                <td>@client.Id</td>
+                <td>@client.Name</td>
+                <td>@client.Address</td>
+                <td>@client.Zipcode</td>
+                <td>@client.City</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Client>? clients;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clients = await Db.Clients.ToListAsync();
+    }
+}  
