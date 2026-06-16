@@ -19,4 +19,4 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new Pet { Id = 2, Name = "Whiskers", ClientId = 2 }
         );
     }
-}
+}  

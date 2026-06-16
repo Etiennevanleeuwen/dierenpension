@@ -16,6 +16,15 @@ else
     <EditForm Model="pet" OnValidSubmit="Save">
         <label>Naam</label>
         <InputText @bind-Value="pet.Name" />
+
+        <label>Client</label>
+        <InputSelect @bind-Value="pet.ClientId">
+            @foreach (var client in clients)
+            {
+                <option value="@client.Id">@client.Name</option>
+            }
+        </InputSelect>
+
         <button type="submit">Save</button>
         <a href="/pets">Cancel</a>
     </EditForm>
@@ -24,10 +33,12 @@ else
 @code {
     [Parameter] public int Id { get; set; }
     private Pet? pet;
+    private List<Client> clients = [];
 
     protected override async Task OnInitializedAsync()
     {
         pet = await Db.Pets.FindAsync(Id);
+        clients = await Db.Clients.ToListAsync();
     }
 
     private async Task Save()
@@ -35,4 +46,4 @@ else
         await Db.SaveChangesAsync();
         Nav.NavigateTo("/pets");
     }
-} 
+}
