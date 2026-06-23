@@ -28,7 +28,10 @@ else
                 <td>@pet.Id</td>
                 <td>@pet.Name</td>
                 <td>@pet.Client?.Name</td>
-                <td><a href="/pets/@pet.Id/edit">Edit</a></td>
+                <td>
+                    <a href="/pets/@pet.Id/edit">Edit</a>
+                    <button @onclick="() => Delete(pet)">Delete</button>
+                </td>
             </tr>
         }
         </tbody>
@@ -42,4 +45,11 @@ else
     {
         pets = await Db.Pets.Include(p => p.Client).ToListAsync();
     }
-}  
+
+    private async Task Delete(Pet pet)
+    {
+        Db.Pets.Remove(pet);
+        await Db.SaveChangesAsync();
+        pets!.Remove(pet);
+    }
+}
