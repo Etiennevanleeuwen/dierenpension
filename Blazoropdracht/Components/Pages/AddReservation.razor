@@ -1,0 +1,73 @@
+﻿@page "/reservations/new"
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<PageTitle>New Reservation</PageTitle>
+<h1>New Reservation</h1>
+
+<EditForm Model="reservation" OnValidSubmit="Save">
+    <label>Pet</label>
+    <InputSelect @bind-Value="reservation.PetId">
+        <option value="0">-- Select a pet --</option>
+        @foreach (var pet in pets)
+        {
+            <option value="@pet.Id">@pet.Name</option>
+        }
+    </InputSelect>
+
+    <label>Start date</label>
+    <InputDate @bind-Value="reservation.StartDate" />
+
+    <label>End date</label>
+    <InputDate @bind-Value="reservation.EndDate" />
+
+    <label>Cage</label>
+    <InputSelect @bind-Value="reservation.CageId">
+        <option value="0">-- Select a cage --</option>
+        @foreach (var cage in cages)
+        {
+            <option value="@cage.Id">@cage.Name (@cage.Size)</option>
+        }
+    </InputSelect>
+
+    @if (dateError is not null)
+    {
+        <p>@dateError</p>
+    }
+
+    <button type="submit">Save</button>
+    <a href="/reservations">Cancel</a>
+</EditForm>
+
+@code {
+    private Reservation reservation = new()
+    {
+        StartDate = DateOnly.FromDateTime(DateTime.Today),
+        EndDate = DateOnly.FromDateTime(DateTime.Today)
+    };
+
+    private List<Pet> pets = [];
+    private List<Cage> cages = [];
+    private string? dateError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pets = await Db.Pets.ToListAsync();
+        cages = await Db.Cages.ToListAsync();
+    }
+
+    private async Task Save()
+    {
+        if (reservation.EndDate < reservation.StartDate)
+        {
+            dateError = "End date cannot be before start date.";
+            return;
+        }
+
+        Db.Reservations.Add(reservation);
+        await Db.SaveChangesAsync();
+        Nav.NavigateTo("/reservations");
+    }
+}

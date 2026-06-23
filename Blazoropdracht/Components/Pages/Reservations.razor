@@ -1,0 +1,27 @@
+﻿@page "/reservations"
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+@rendermode InteractiveServer
+
+<PageTitle>Reservations</PageTitle>
+<h1>Reservations</h1>
+
+<a href="/reservations/new" class="btn btn-primary mb-3">Add</a>
+
+@if (count is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Total reservations: @count</p>
+}
+
+@code {
+    private int? count;
+
+    protected override async Task OnInitializedAsync()
+    {
+        count = await Db.Reservations.CountAsync();
+    }
+}
