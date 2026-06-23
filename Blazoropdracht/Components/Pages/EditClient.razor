@@ -1,11 +1,12 @@
 ﻿@page "/clients/{Id:int}/edit"
+@page "/clients/new"
 @using Microsoft.EntityFrameworkCore
 @inject AppDbContext Db
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-<PageTitle>Edit Client</PageTitle>
-<h1>Edit Client</h1>
+<PageTitle>@(Id == 0 ? "New Client" : "Edit Client")</PageTitle>
+<h1>@(Id == 0 ? "New Client" : "Edit Client")</h1>
 
 @if (client is null)
 {
@@ -33,14 +34,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        client = await Db.Clients.FindAsync(Id);
+        client = Id == 0 ? new Client() : await Db.Clients.FindAsync(Id);
     }
 
     private async Task Save()
     {
+        if (Id == 0)
+            Db.Clients.Add(client!);
+
         await Db.SaveChangesAsync();
         Nav.NavigateTo("/clients");
     }
 }
-
-
