@@ -8,6 +8,8 @@
 <h1>New Reservation</h1>
 
 <EditForm Model="reservation" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+
     <label>Pet</label>
     <InputSelect @bind-Value="reservation.PetId">
         <option value="0">-- Select a pet --</option>
@@ -22,6 +24,7 @@
 
     <label>End date</label>
     <InputDate @bind-Value="reservation.EndDate" />
+    <ValidationMessage For="() => reservation.EndDate" />
 
     <label>Cage</label>
     <InputSelect @bind-Value="reservation.CageId">
@@ -31,11 +34,6 @@
             <option value="@cage.Id">@cage.Name (@cage.Size)</option>
         }
     </InputSelect>
-
-    @if (dateError is not null)
-    {
-        <p>@dateError</p>
-    }
 
     <button type="submit">Save</button>
     <a href="/reservations">Cancel</a>
@@ -50,7 +48,6 @@
 
     private List<Pet> pets = [];
     private List<Cage> cages = [];
-    private string? dateError;
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,12 +57,6 @@
 
     private async Task Save()
     {
-        if (reservation.EndDate < reservation.StartDate)
-        {
-            dateError = "End date cannot be before start date.";
-            return;
-        }
-
         Db.Reservations.Add(reservation);
         await Db.SaveChangesAsync();
         Nav.NavigateTo("/reservations");
