@@ -36,3 +36,12 @@ INSERT INTO Cages (Id, Name, Size) VALUES
                                        (1, 'Kleine kooi', 'S'),
                                        (2, 'Middelste kooi', 'M'),
                                        (3, 'Grote kooi', 'L');
+CREATE TABLE Users (
+                       Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       Email TEXT NOT NULL UNIQUE,
+                       Password TEXT NOT NULL,
+                       Role TEXT NOT NULL CHECK (Role IN ('user', 'admin'))
+);
+INSERT INTO Users (Id, Email, Password, Role) VALUES
+                                                  (1, 'admin@example.com', 'welkom123', 'admin'),
+                                                  (2, 'user@example.com', 'welkom123', 'user');

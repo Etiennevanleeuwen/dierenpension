@@ -1,6 +1,6 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazoropdracht", "Blazoropdracht\Blazoropdracht.csproj", "{DE985053-6BE5-4298-81C5-F454506C9645}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazoropdracht", "Blazoropdracht\Blazoropdracht.csproj", "{DE985053-6BE5-4298-81C5-F454506C9645}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder1", "SolutionFolder1", "{B17C3F1C-59CD-4328-86BA-35BA2499D35C}"
 EndProject
