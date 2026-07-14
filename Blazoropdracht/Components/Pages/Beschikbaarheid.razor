@@ -1,0 +1,63 @@
+﻿@page "/beschikbaarheid"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+
+<h3>Beschikbaarheid kooien</h3>
+
+<div class="mb-3" style="max-width:200px">
+    <label>Datum:</label>
+    <input type="date" @bind="geselecteerdeDatum" @bind:after="LaadBeschikbaarheid" class="form-control" />
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Kooi</th>
+        <th>Grootte</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var kooi in kooien)
+    {
+        <tr>
+            <td>@kooi.Name</td>
+            <td>@kooi.Size</td>
+            <td>
+                @if (bezetteKooiIds.Contains(kooi.Id))
+                {
+                    <span class="badge bg-danger">Bezet</span>
+                }
+                else
+                {
+                    <span class="badge bg-success">Vrij</span>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private DateOnly geselecteerdeDatum = DateOnly.FromDateTime(DateTime.Today);
+    private List<Cage> kooien = new();
+    private HashSet<int> bezetteKooiIds = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        kooien = await Db.Cages.ToListAsync();
+        await LaadBeschikbaarheid();
+    }
+
+    private async Task LaadBeschikbaarheid()
+    {
+        var bezet = await Db.Reservations
+            .Where(r => r.StartDate <= geselecteerdeDatum && r.EndDate >= geselecteerdeDatum)
+            .Select(r => r.CageId)
+            .ToListAsync();
+
+        bezetteKooiIds = bezet.ToHashSet();
+    }
+}
