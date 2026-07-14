@@ -15,14 +15,21 @@
 else
 {
     <EditForm Model="client" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
         <label>Name</label>
-        <InputText @bind-Value="client.Name" />
+        <InputText @bind-Value="client.Name"/>
         <label>Address</label>
-        <InputText @bind-Value="client.Address" />
+        <InputText @bind-Value="client.Address"/>
         <label>Zipcode</label>
-        <InputText @bind-Value="client.Zipcode" />
+        <InputText @bind-Value="client.Zipcode"/>
         <label>City</label>
-        <InputText @bind-Value="client.City" />
+        <InputText @bind-Value="client.City"/>
+        <label>Telefoon</label>
+        <InputText @bind-Value="client.Phone"/>
+        <ValidationMessage For="@(() => client.Phone)"/>
+        <label>E-mail</label>
+        <InputText @bind-Value="client.Email"/>
+        <ValidationMessage For="@(() => client.Email)"/>
         <button type="submit">Save</button>
         <a href="/clients">Cancel</a>
     </EditForm>
