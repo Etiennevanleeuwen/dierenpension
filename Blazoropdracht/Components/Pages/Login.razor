@@ -1,0 +1,77 @@
+﻿@page "/login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext Db
+@inject NavigationManager Nav
+@inject IHttpContextAccessor HttpContextAccessor
+
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+
+<EditForm Model="Model" OnValidSubmit="SignIn" FormName="login">
+    <DataAnnotationsValidator />
+
+    @if (error is not null)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <InputText type="email" class="form-control" @bind-Value="Model.Email" />
+        <ValidationMessage For="() => Model.Email" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <InputText type="password" class="form-control" @bind-Value="Model.Password" />
+        <ValidationMessage For="() => Model.Password" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Log in</button>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private LoginModel Model { get; set; } = default!;
+
+    private string? error;
+
+    protected override void OnInitialized() => Model ??= new();
+
+    private async Task SignIn()
+    {
+        var user = await Db.Users.FirstOrDefaultAsync(u => u.Email == Model.Email);
+        if (user is null || user.Password != Model.Password)
+        {
+            error = "Invalid email or password.";
+            return;
+        }
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, user.Email),
+            new(ClaimTypes.Role, user.Role),
+        };
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        await HttpContextAccessor.HttpContext!.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity));
+
+        Nav.NavigateTo("/", forceLoad: true);
+    }
+
+    public class LoginModel
+    {
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.EmailAddress]
+        public string Email { get; set; } = "";
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Password { get; set; } = "";
+    }
+}
